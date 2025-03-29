@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Bookstore{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'main/css/styles.css' %}">
+
+    <!-- FontAwesome for icons -->
+    <script src="https://kit.fontawesome.com/04c4678eed.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="{% url 'book_list' %}">BookStore</a>
+
+            <!-- Search Bar -->
+            <form class="d-flex me-3" action="{% url 'search_results' %}" method="GET">
+                <input class="form-control me-2" type="search" name="query" placeholder="Search books..." aria-label="Search">
+                <button class="btn btn-outline-dark" type="submit">Search</button>
+            </form>
+
+            <div class="d-flex align-items-center">
+                <!-- Cart Icon -->
+                <a href="{% url 'view_cart' %}" class="nav-link position-relative me-3">
+                    <i class="fa fa-shopping-cart fa-lg"></i>
+                    <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ cart_count|default:"0" }}
+                    </span>
+                </a>
+
+                <!-- User Authentication Links -->
+                <ul class="navbar-nav d-flex flex-row">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item me-2">
+                            <a class="nav-link" href="{% url 'profile' %}">
+                                <i class="bi bi-person-circle"></i> {{ user.username }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-danger btn-sm" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item me-2">
+                            <a class="nav-link btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-success btn-sm" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function updateCartCount() {
+            fetch("{% url 'cart-count' %}")
+                .then(response => response.json())
+                .then(data => {
+                    let cartCountElement = document.getElementById("cart-count");
+                    if (cartCountElement) {
+                        cartCountElement.textContent = data.cart_count || 0;
+                    }
+                })
+                .catch(error => console.error("Error updating cart count:", error));
+        }
+
+        // Update on page load and every 5 seconds
+        document.addEventListener("DOMContentLoaded", updateCartCount);
+        setInterval(updateCartCount, 5000);
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

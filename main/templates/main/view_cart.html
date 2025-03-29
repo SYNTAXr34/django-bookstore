@@ -1,0 +1,60 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Your Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Your Cart</h2>
+
+    {% if cart_items %}
+    <table class="table table-bordered text-center">
+        <thead class="thead-dark">
+            <tr>
+                <th>Book</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <!-- <th>Action</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>{{ item.book.title }}</td>
+                <td>
+                    <form method="POST" action="{% url 'update_cart_item' item.id %}" class="d-flex justify-content-center">
+                        {% csrf_token %}
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="0" class="form-control w-50">
+                        <button type="submit" class="btn btn-sm btn-success ml-2">Update</button>
+                    </form>
+                </td>
+                <td>${{ item.book.price|floatformat:2 }}</td>
+                <td>${% widthratio item.book.price 1 item.quantity %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h4 class="text-right">Total Price: <strong>${{ total_price|floatformat:2 }}</strong></h4>
+
+    <div class="d-flex justify-content-between mt-4">
+        <form method="POST" action="{% url 'clear_cart' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning">Clear Cart</button>
+        </form>
+
+        <form action="{% url 'checkout' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Proceed to Checkout</button>
+        </form>
+        <form action="{% url 'book_list' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-dark">Home</button>
+        </form>
+    </div>
+
+    {% else %}
+    <p class="alert alert-info text-center">Your cart is empty.</p>
+    {% endif %}
+</div>
+{% endblock %}

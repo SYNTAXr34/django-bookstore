@@ -1,0 +1,53 @@
+{% extends "main/base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Profile</h2>
+
+    <div class="card p-4 shadow-sm">
+        <div class="row">
+            <!-- Profile Picture Section -->
+            <div class="col-md-4 text-center">
+                {% if profile.profile_picture %}
+                    <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-fluid" style="max-width: 150px; height: 150px; object-fit: cover;">
+                {% else %}
+                    <p class="text-muted">No profile picture available.</p>
+                {% endif %}
+            </div>
+
+            <!-- User Info Section -->
+            <div class="col-md-8">
+                <p><strong>Username:</strong> {{ profile.user.username }}</p>
+                <p><strong>Email:</strong> {{ profile.user.email }}</p>
+                <p><strong>Bio:</strong> {{ profile.bio|default:"No bio added yet." }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order History Section -->
+    <div class="card mt-4 p-4 shadow-sm">
+        <h3 class="mb-3">Order History</h3>
+        {% if orders %}
+            <ul class="list-group">
+                {% for order in orders %}
+                    <li class="list-group-item">
+                        <strong>Order ID:</strong> {{ order.id }} - 
+                        <strong>Total:</strong> ${{ order.total_price }} - 
+                        <strong>Date:</strong> {{ order.created_date }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted">No orders yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="mt-4 text-center">
+        <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Go Back</a>
+    </div>
+</div>
+{% endblock %}

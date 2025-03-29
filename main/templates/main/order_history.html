@@ -1,0 +1,27 @@
+<!-- order_history.html -->
+{% extends 'main/base.html' %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<h2>My Order History</h2>
+
+{% if orders %}
+    <ul class="list-group">
+        {% for order in orders %}
+        <li class="list-group-item">
+            <strong>Order #{{ order.id }}</strong> - {{ order.created_date|date:"F j, Y, g:i a" }}
+            <br>Total: ${{ order.total_price }}
+            <br>Items:
+            <ul>
+                {% for item in order.order_items.all %}
+                    <li>{{ item.book.title }} (x{{ item.quantity }})</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no orders yet.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+{% block content %}
+<h2>Your Wishlist</h2>
+<div class="row">
+    {% for book in wishlist.books.all %}
+    <div class="col-md-3">
+        <div class="card">
+            <img src="{{ book.cover_image.url }}" class="card-img-top">
+            <div class="card-body">
+                <h5>{{ book.title }}</h5>
+                <p>{{ book.author }}</p>
+                <form method="post" action="{% url 'remove_from_wishlist' book.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </form>
+                <form action="{% url 'move_to_cart' book.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Move to Cart</button>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No books in your wishlist.</p>
+    {% endfor %}
+</div>
+{% endblock %}

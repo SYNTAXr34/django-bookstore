@@ -1,0 +1,11 @@
+@media (max-width: 768px) {
+    #cart-count {
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+}
+@media (min-width: 992px) {
+    #cart-count {
+        display: inline-block !important;
+    }
+}
